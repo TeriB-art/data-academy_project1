@@ -2,50 +2,50 @@
 
 CREATE TABLE t_tereza_bohmova_project_SQL_primary_final AS (
 SELECT
-	cp.DATE_FROM,
-	cp.DATE_TO,
-	cp.CATEGORY_CODE AS food_code,
+	cp.date_from,
+	cp.date_to,
+	cp.category_code AS food_code,
 	cpc.name AS food_name,
 	cp.value AS food_price,
 	cpc.price_value AS food_quantity,
 	cpc.price_unit AS food_unit,
 	cr.name AS region_name,
-	cp.REGION_CODE,
-	cpay.VALUE_TYPE_CODE,
+	cp.region_code,
+	cpay.value_type_code,
 	cpvt.name AS value_name,
-	cpay.VALUE,
+	cpay.value,
 	cpay.unit_code,
 	cpu.name AS unit_name,
-	cpay.CALCULATION_CODE,
+	cpay.calculation_code,
 	cpcal.name AS calculation_name,
-	cpay.INDUSTRY_BRANCH_CODE,
+	cpay.industry_branch_code,
 	cpib.name AS industry_branch_name,
-	cpay.PAYROLL_YEAR,
-	cpay.PAYROLL_QUARTER
+	cpay.payroll_year,
+	cpay.payroll_quarter 
 FROM
-	CZECHIA_PRICE CP
-LEFT JOIN CZECHIA_PRICE_CATEGORY CPC 
+	czechia_price cp
+LEFT JOIN czechia_price_category cpc 
     ON
-	cp.CATEGORY_CODE = cpc.CODE
-LEFT JOIN CZECHIA_REGION CR 
+	cp.category_code = cpc.code
+LEFT JOIN czechia_region cr 
    ON
-	cp.REGION_CODE = cr.CODE
-LEFT JOIN CZECHIA_PAYROLL cpay
+	cp.region_code = cr.code
+LEFT JOIN czechia_payroll cpay
    ON
-	date_part('year', CP.DATE_TO) = cpay.PAYROLL_YEAR
-	AND date_part('quarter', CP.DATE_TO) = cpay.PAYROLL_QUARTER
-LEFT JOIN CZECHIA_PAYROLL_INDUSTRY_BRANCH CPIB 
+	date_part('year', cp.date_to) = cpay.payroll_year
+	AND date_part('quarter', cp.date_to) = cpay.payroll_quarter
+LEFT JOIN czechia_payroll_industry_branch CPIB 
    ON
-	cpay.INDUSTRY_BRANCH_CODE = cpib.CODE
-LEFT JOIN CZECHIA_PAYROLL_VALUE_TYPE CPVT 
+	cpay.industry_branch_code = cpib.code
+LEFT JOIN czechia_payroll_value_type CPVT 
    ON
-	cpay.VALUE_TYPE_CODE = cpvt.CODE
-LEFT JOIN CZECHIA_PAYROLL_CALCULATION cpcal
+	cpay.value_type_code = cpvt.code
+LEFT JOIN czechia_payroll_calculation cpcal
   ON
-	cpay.CALCULATION_CODE = cpcal.code
-LEFT JOIN CZECHIA_PAYROLL_UNIT CPU 
+	cpay.calculation_code = cpcal.code
+LEFT JOIN czechia_payroll_unit CPU 
   ON
-	cpay.UNIT_CODE = cpu.CODE
+	cpay.unit_code = cpu.code
   );
 
 
