@@ -36,28 +36,26 @@ CREATE TEMP TABLE payroll_change AS
 
 --Skript 3: Porovnání změny cen potravin a výše mezd
 
-WITH price_payroll_change AS (
-                       SELECT *
-                       FROM price_change pc
-                       JOIN payroll_change payc
-                          ON pc.food_price_year = payc.payroll_year
-                       )
-SELECT DISTINCT ppc.food_price_year, ppc.food_name, ppc.price_change/ppc.payroll_change AS price_payroll_rate
+WITH price_payroll_change AS
+  (SELECT *
+   FROM price_change pc
+   JOIN payroll_change payc ON pc.food_price_year = payc.payroll_year)
+SELECT DISTINCT ppc.food_price_year,
+                ppc.food_name,
+                ppc.price_change/ppc.payroll_change AS price_payroll_rate
 FROM price_payroll_change ppc
 WHERE ppc.price_change/ppc.payroll_change > 1.1
-ORDER BY price_payroll_rate desc, ppc.food_price_year;
+ORDER BY price_payroll_rate DESC,
+         ppc.food_price_year;
 
 --Skript 4: výpis pouze roků
 
-WITH price_payroll_change AS (
-                       SELECT *
-                       FROM price_change pc
-                       JOIN payroll_change payc
-                          ON pc.food_price_year = payc.payroll_year
-                       )
+WITH price_payroll_change AS
+  (SELECT *
+   FROM price_change pc
+   JOIN payroll_change payc ON pc.food_price_year = payc.payroll_year)
 SELECT DISTINCT ppc.food_price_year
 FROM price_payroll_change ppc
 WHERE ppc.price_change/ppc.payroll_change > 1.1
 ORDER BY ppc.food_price_year;
-
 
