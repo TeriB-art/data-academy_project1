@@ -2,26 +2,37 @@
 
 --Skript 1: Změna ceny potravin oproti předchozímu roku 
 
-CREATE TEMP TABLE price_change AS (
-                    SELECT date_part ('year', DATE_FROM ) AS food_price_year, tb1.FOOD_CODE , tb1.FOOD_NAME, 
-                           AVG(tb1.FOOD_PRICE) AS avg_food_price,
-                           LAG(date_part('year',date_from)) OVER (PARTITION BY tb1.FOOD_CODE ORDER BY date_part('year',date_from)) previous_year,
-                           AVG(tb1.FOOD_PRICE)/LAG(AVG(tb1.FOOD_PRICE)) OVER (PARTITION BY tb1.food_code ORDER BY date_part('year',date_from)) price_change  
-                    FROM T_TEREZA_BOHMOVA_PROJECT_SQL_PRIMARY_FINAL tb1
-                    GROUP BY date_part ('year', DATE_FROM ), tb1.FOOD_CODE , tb1.FOOD_NAME
-                   );
+CREATE TEMP TABLE price_change AS
+  (SELECT date_part ('year', date_from) AS food_price_year,
+          food_code,
+          food_name,
+          AVG(food_price) AS avg_food_price,
+          LAG(date_part('year', date_from)) OVER (PARTITION BY food_code
+                                                  ORDER BY date_part('year', date_from)) AS previous_year,
+          AVG(food_price)/LAG(AVG(food_price)) OVER (PARTITION BY food_code
+                                                     ORDER BY date_part('year', date_from)) AS price_change
+   FROM T_TEREZA_BOHMOVA_PROJECT_SQL_PRIMARY_FINAL tb1
+   GROUP BY date_part ('year', date_from),
+            food_code,
+            food_name);
 
 --Skript 2: Změna výše mezd oproti předchozímu roku 
 
-CREATE TEMP TABLE payroll_change AS ( 
-                   SELECT tb1.VALUE_NAME, tb1.PAYROLL_YEAR,
-                          round(avg(tb1.VALUE)) AS avg_payroll_per_year,
-                          LAG(payroll_year) OVER (PARTITION BY tb1.VALUE_NAME ORDER BY payroll_year) payroll_previous_year, 
-                          round(avg(tb1.VALUE))/lag(avg(tb1.VALUE)) OVER (PARTITION BY tb1.VALUE_NAME ORDER BY payroll_year) AS payroll_change
-                   FROM T_TEREZA_BOHMOVA_PROJECT_SQL_PRIMARY_FINAL tb1
-                   WHERE tb1.INDUSTRY_BRANCH_CODE IS NULL AND tb1.VALUE_TYPE_CODE = '5958' AND tb1.CALCULATION_CODE ='200'
-                   GROUP BY tb1.value_name, tb1.PAYROLL_YEAR
-                  );
+CREATE TEMP TABLE payroll_change AS
+  (SELECT value_name,
+          payroll_year,
+          round(avg(value)) AS avg_payroll_per_year,
+          LAG(payroll_year) OVER (PARTITION BY value_name
+                                  ORDER BY payroll_year) AS payroll_previous_year,
+          round(avg(value))/lag(avg(value)) OVER (PARTITION BY value_name
+                                                  ORDER BY payroll_year) AS payroll_change
+   FROM T_TEREZA_BOHMOVA_PROJECT_SQL_PRIMARY_FINAL tb1
+   WHERE industry_branch_code IS NULL
+     AND value_type_code = '5958'   -- kód pro mzdy 
+     AND calculation_code ='200'    -- přepočtený typ výpočtu mzdy
+   GROUP BY value_name,
+            payroll_year);
+
 
 --Skript 3: Porovnání změny cen potravin a výše mezd
 
